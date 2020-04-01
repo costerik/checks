@@ -1,0 +1,25 @@
+# dependencies
+/node_modules
+
+# testing
+/coverage
+
+# logs
+/logs/*
+/log-test/*
+/processed-logs/*
+
+# misc
+.idea
+.DS_Store
+.vscode/*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+jest-test-results.json
+*.env
+.env
+response.json
+#lambda layers
+/nodejs
+nodejs.zip

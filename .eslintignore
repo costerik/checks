@@ -1,0 +1,6 @@
+coverage
+node_modules
+yarn-cache
+npm-cache
+.eslintrc.js
+.prettierrc.js
