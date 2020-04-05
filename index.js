@@ -49,6 +49,7 @@ function setupServer(req, res) {
       console.log('method:', method);
       console.log('query', queryStringObject);
       console.log('payload', buffer);
+      console.log('statusCode', statusCode);
       console.log('response', response);
     });
   });
