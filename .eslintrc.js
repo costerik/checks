@@ -1,10 +1,15 @@
 module.exports = {
+  parser: '@typescript-eslint/parser',
   env: {
     commonjs: true,
     es6: true,
     node: true,
   },
-  extends: ['prettier', 'airbnb-base'],
+  extends: [
+    'plugin:@typescript-eslint/recommended',
+    'prettier/@typescript-eslint',
+    'plugin:prettier/recommended',
+  ],
   plugins: ['prettier'],
   globals: {
     Atomics: 'readonly',
@@ -12,8 +17,5 @@ module.exports = {
   },
   parserOptions: {
     ecmaVersion: 2018,
-  },
-  rules: {
-    //'prettier/prettier': 'error',
   },
 };

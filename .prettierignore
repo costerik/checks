@@ -1,4 +1,9 @@
-dist/
-build/
-node_modules/
-.git/
+coverage
+node_modules
+yarn-cache
+npm-cache
+dist
+build
+.git
+.eslintrc.js
+.prettierrc.js

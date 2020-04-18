@@ -3,24 +3,29 @@
  *
  * */
 
-// Dependencies
-const http = require('http');
-const https = require('https');
-const url = require('url');
-const { StringDecoder } = require('string_decoder');
-const fs = require('fs');
+import http from 'http';
+import https from 'https';
+import url from 'url';
+import { StringDecoder } from 'string_decoder';
+import fs from 'fs';
 
-const config = require('./config');
-const helpers = require('./lib/helpers');
+/*
+ *Types
+ *
+ * */
+import type { IncomingMessage, ServerResponse } from 'http';
+import type { DataType, UserType, TokenType } from './index.d';
 
-const handlers = require('./lib/handlers');
+import config from './config';
+import * as helpers from './lib/helpers';
+import * as handlers from './lib/handlers';
 
-function setupServer(req, res) {
+function setupServer(req: IncomingMessage, res: ServerResponse): void {
   const { method, url: urlReq, headers } = req;
-  const parseUrl = url.parse(urlReq, true);
+  const parseUrl = url.parse(urlReq || '', true);
 
   const { pathname: path, query: queryStringObject } = parseUrl;
-  const trimmedPath = path.replace(/^\/+|\/+$/g, '');
+  const trimmedPath = (path && path.replace(/^\/+|\/+$/g, '')) || '';
   const decoder = new StringDecoder('utf-8');
   let buffer = '';
 
@@ -31,7 +36,7 @@ function setupServer(req, res) {
   req.on('end', () => {
     buffer += decoder.end();
 
-    const data = {
+    const data: DataType<UserType | TokenType> = {
       headers,
       trimmedPath,
       method,

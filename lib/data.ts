@@ -3,14 +3,19 @@
  *
  */
 
-// Dependencies
-const fs = require('fs');
-const path = require('path');
-const helpers = require('./helpers');
+/*Dependencies*/
+import fs from 'fs';
+import path from 'path';
+import * as helpers from './helpers';
 
 const baseDir = path.join(__dirname, '/../.data/');
 
-function create(dir, file, data, cb) {
+export function create<T>(
+  dir: string,
+  file: string,
+  data: T,
+  cb: (err: NodeJS.ErrnoException | boolean, message?: string) => void
+): void {
   fs.open(`${baseDir}${dir}/${file}.json`, 'wx', (err, openFileDescriptor) => {
     if (err) {
       cb(err, "Couldn't create new file, It may already exist");
@@ -37,17 +42,26 @@ function create(dir, file, data, cb) {
   });
 }
 
-function read(dir, file, cb) {
+export function read<T>(
+  dir: string,
+  file: string,
+  cb: (err: NodeJS.ErrnoException | boolean, response: string | T | { [key: string]: string }) => void
+): void {
   fs.readFile(`${baseDir}${dir}/${file}.json`, 'utf8', (err, data) => {
     if (err) {
       cb(err, 'There was an error reading the file');
       return;
     }
-    cb(false, helpers.parseJsonToObject(data));
+    cb(false, helpers.parseJsonToObject<T>(data));
   });
 }
 
-function update(dir, file, data, cb) {
+export function update<T>(
+  dir: string,
+  file: string,
+  data: T,
+  cb: (err: NodeJS.ErrnoException | boolean, message?: string) => void
+): void {
   fs.writeFile(`${baseDir}${dir}/${file}.json`, JSON.stringify(data), (err) => {
     if (err) {
       cb(err, 'There was an error updating the file');
@@ -57,7 +71,11 @@ function update(dir, file, data, cb) {
   });
 }
 
-function eliminate(dir, file, cb) {
+export function eliminate(
+  dir: string,
+  file: string,
+  cb: (err: NodeJS.ErrnoException | boolean, message?: string) => void
+): void {
   fs.unlink(`${baseDir}${dir}/${file}.json`, (err) => {
     if (err) {
       cb(err, 'Error deleting file');
@@ -66,13 +84,3 @@ function eliminate(dir, file, cb) {
     cb(false);
   });
 }
-
-const data = {
-  baseDir,
-  create,
-  update,
-  eliminate,
-  read,
-};
-
-module.exports = data;

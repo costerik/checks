@@ -3,13 +3,13 @@
  *
  */
 
-// Dependencies
-const storeData = require('../data');
-const helpers = require('../helpers');
-const config = require('../../config');
-const { verifyToken } = require('./tokens');
+/* Dependencies*/
+import * as storeData from '../data';
+import * as helpers from '../helpers';
+import config from '../../config';
+import { verifyToken } from './tokens';
 
-function post(data, cb) {
+export function post(data, cb): void {
   const {
     payload: {
       protocol: pProtocol,
@@ -32,20 +32,24 @@ function post(data, cb) {
         });
         return;
       }
-      const protocol = (typeof pProtocol === 'string' && ['http', 'https'].includes(pProtocol) && pProtocol) || false;
+      const protocol =
+        (typeof pProtocol === 'string' && ['http', 'https'].includes(pProtocol) && pProtocol) || false;
       const url = (typeof pUrl === 'string' && pUrl.trim().length && pUrl) || false;
-      const method = (typeof pMethod === 'string' && ['get', 'post', 'put', 'delete'].includes(pMethod) && pMethod)
-        || false;
-      const timeoutSeconds = (typeof pTimeoutSeconds === 'number'
-          && pTimeoutSeconds > 0
-          && pTimeoutSeconds <= 5
-          && pTimeoutSeconds)
-        || false;
-      const successCode = (typeof pSuccessCode === 'object'
-          && Array.isArray(pSuccessCode)
-          && pSuccessCode.length > 0
-          && pSuccessCode)
-        || false;
+      const method =
+        (typeof pMethod === 'string' && ['get', 'post', 'put', 'delete'].includes(pMethod) && pMethod) ||
+        false;
+      const timeoutSeconds =
+        (typeof pTimeoutSeconds === 'number' &&
+          pTimeoutSeconds > 0 &&
+          pTimeoutSeconds <= 5 &&
+          pTimeoutSeconds) ||
+        false;
+      const successCode =
+        (typeof pSuccessCode === 'object' &&
+          Array.isArray(pSuccessCode) &&
+          pSuccessCode.length > 0 &&
+          pSuccessCode) ||
+        false;
       if (protocol && url && method && timeoutSeconds && successCode) {
         const { phone } = readTokenData || {};
         storeData.read('users', phone, (readUserErr, readUserData) => {
@@ -54,10 +58,11 @@ function post(data, cb) {
             return;
           }
 
-          const checks = (typeof readUserData.checks === 'object'
-              && Array.isArray(readUserData.checks)
-              && readUserData.checks)
-            || [];
+          const checks =
+            (typeof readUserData.checks === 'object' &&
+              Array.isArray(readUserData.checks) &&
+              readUserData.checks) ||
+            [];
           if (checks.length < config.maxChecks) {
             const checkId = helpers.createRandomString(20);
             const checkData = {
@@ -98,7 +103,7 @@ function post(data, cb) {
   }
 }
 
-function get(data, cb) {
+export function get(data, cb): void {
   const { query: { id } = {}, headers: { token } = {} } = data || {};
   const checkId = (typeof id === 'string' && id.length === 20 && id) || false;
   const myToken = (typeof token === 'string' && token.length === 20 && token) || false;
@@ -133,7 +138,7 @@ function get(data, cb) {
   }
 }
 
-function put(data, cb) {
+export function put(data, cb): void {
   const {
     payload: {
       id: pId,
@@ -167,22 +172,26 @@ function put(data, cb) {
           if (!verifyTokenErr) {
             cb(403, { error: 'token is invalid' });
           } else {
-            const protocol = (typeof pProtocol === 'string' && ['http', 'https'].includes(pProtocol) && pProtocol) || false;
+            const protocol =
+              (typeof pProtocol === 'string' && ['http', 'https'].includes(pProtocol) && pProtocol) || false;
             const url = (typeof pUrl === 'string' && pUrl.trim().length && pUrl) || false;
-            const method = (typeof pMethod === 'string'
-                && ['get', 'post', 'put', 'delete'].includes(pMethod)
-                && pMethod)
-              || false;
-            const timeoutSeconds = (typeof pTimeoutSeconds === 'number'
-                && pTimeoutSeconds > 0
-                && pTimeoutSeconds <= 5
-                && pTimeoutSeconds)
-              || false;
-            const successCode = (typeof pSuccessCode === 'object'
-                && Array.isArray(pSuccessCode)
-                && pSuccessCode.length > 0
-                && pSuccessCode)
-              || false;
+            const method =
+              (typeof pMethod === 'string' &&
+                ['get', 'post', 'put', 'delete'].includes(pMethod) &&
+                pMethod) ||
+              false;
+            const timeoutSeconds =
+              (typeof pTimeoutSeconds === 'number' &&
+                pTimeoutSeconds > 0 &&
+                pTimeoutSeconds <= 5 &&
+                pTimeoutSeconds) ||
+              false;
+            const successCode =
+              (typeof pSuccessCode === 'object' &&
+                Array.isArray(pSuccessCode) &&
+                pSuccessCode.length > 0 &&
+                pSuccessCode) ||
+              false;
             const updatedCheckData = { ...readCheckData };
             if (protocol || url || method || timeoutSeconds || successCode) {
               if (protocol) updatedCheckData.protocol = protocol;
@@ -211,7 +220,7 @@ function put(data, cb) {
   }
 }
 
-function eliminate(data, cb) {
+export function eliminate(data, cb): void {
   const { payload: { id: pId } = {}, headers: { token: pToken } = {} } = data || {};
 
   const id = (typeof pId === 'string' && pId.length === 20 && pId) || false;
@@ -276,12 +285,3 @@ function eliminate(data, cb) {
     cb(400, { error: 'Invalid check' });
   }
 }
-
-const handler = {
-  post,
-  get,
-  put,
-  delete: eliminate,
-};
-
-module.exports = handler;
