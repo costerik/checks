@@ -8,9 +8,9 @@ import * as tokensHandler from './handlers/tokens';
 import * as checksHandler from './handlers/checks';
 
 /* Types*/
-import type { DataType, CallbackType, UserType, TokenType } from '../index.d';
+import type { DataType, CallbackType, UserType, TokenType, CheckType } from '../index.d';
 
-export function notFound(callback: CallbackType<UserType>): void {
+export function notFound(callback: CallbackType): void {
   callback(404);
 }
 
@@ -101,19 +101,43 @@ export function tokens(data: DataType<TokenType>, cb: CallbackType<TokenType>): 
 /* End Tokens */
 
 /* Checks */
-export function checks(data, cb): void {
+export function checks(data: DataType<CheckType>, cb: CallbackType<CheckType>): void {
   let { method } = data;
-  method = method.toLowerCase();
+  method = (method && method.toLowerCase()) || '';
 
   const acceptableMethods = ['post', 'get', 'put', 'delete'];
   if (!acceptableMethods.includes(method)) {
     cb(405);
     return;
   }
+  switch (method) {
+    case 'post':
+      checksHandler.post(data, (statusCode, response): void => {
+        console.log('checks->args', statusCode, response);
+        cb(statusCode, response);
+      });
+      break;
+    case 'get':
+      checksHandler.get<CheckType>(data, (statusCode, response): void => {
+        console.log('checks->args', statusCode, response);
+        cb(statusCode, response);
+      });
 
-  checksHandler[method](data, (statusCode, response): void => {
-    console.log('checks->args', statusCode, response);
-    cb(statusCode, response);
-  });
+      break;
+    case 'put':
+      checksHandler.put<CheckType>(data, (statusCode, response): void => {
+        console.log('checks->args', statusCode, response);
+        cb(statusCode, response);
+      });
+      break;
+    case 'delete':
+      checksHandler.eliminate<CheckType>(data, (statusCode, response): void => {
+        console.log('checks->args', statusCode, response);
+        cb(statusCode, response);
+      });
+
+      break;
+    default:
+  }
 }
 /* End checks */

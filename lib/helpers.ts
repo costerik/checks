@@ -8,7 +8,8 @@ import crypto from 'crypto';
 import config from '../config';
 
 export function hash(str: string): string | boolean {
-  if (typeof str === 'string' && !str.length)
+  console.log(config.hashingSecret, str);
+  if (typeof str === 'string' && str.length)
     return crypto.createHmac('sha256', config.hashingSecret).update(str).digest('hex');
   return false;
 }

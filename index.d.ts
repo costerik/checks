@@ -36,3 +36,13 @@ export type TokenType = {
   expires?: number;
   extend?: boolean;
 };
+
+export type CheckType = {
+  phone?: string;
+  id?: string;
+  protocol?: string;
+  url?: string;
+  method?: string;
+  timeoutSeconds?: number;
+  successCode?: Array<number>;
+};

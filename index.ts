@@ -44,19 +44,60 @@ function setupServer(req: IncomingMessage, res: ServerResponse): void {
       query: queryStringObject,
     };
 
-    const handler = handlers[trimmedPath] || handlers.notFound;
+    switch (trimmedPath) {
+      case 'users':
+        handlers.users(data, (statusCode, response) => {
+          res.setHeader('Content-Type', 'application/json');
+          res.writeHead(statusCode);
+          res.end(JSON.stringify(response || {}));
 
-    handler(data, (statusCode, response) => {
-      res.setHeader('Content-Type', 'application/json');
-      res.writeHead(statusCode);
-      res.end(JSON.stringify(response || {}));
+          console.log('method:', method);
+          console.log('query', queryStringObject);
+          console.log('payload', buffer);
+          console.log('statusCode', statusCode);
+          console.log('response', response);
+        });
+        break;
+      case 'checks':
+        handlers.checks(data, (statusCode, response) => {
+          res.setHeader('Content-Type', 'application/json');
+          res.writeHead(statusCode);
+          res.end(JSON.stringify(response || {}));
 
-      console.log('method:', method);
-      console.log('query', queryStringObject);
-      console.log('payload', buffer);
-      console.log('statusCode', statusCode);
-      console.log('response', response);
-    });
+          console.log('method:', method);
+          console.log('query', queryStringObject);
+          console.log('payload', buffer);
+          console.log('statusCode', statusCode);
+          console.log('response', response);
+        });
+
+        break;
+      case 'tokens':
+        handlers.tokens(data, (statusCode, response) => {
+          res.setHeader('Content-Type', 'application/json');
+          res.writeHead(statusCode);
+          res.end(JSON.stringify(response || {}));
+
+          console.log('method:', method);
+          console.log('query', queryStringObject);
+          console.log('payload', buffer);
+          console.log('statusCode', statusCode);
+          console.log('response', response);
+        });
+        break;
+      default:
+        handlers.notFound((statusCode, response) => {
+          res.setHeader('Content-Type', 'application/json');
+          res.writeHead(statusCode);
+          res.end(JSON.stringify(response || {}));
+
+          console.log('method:', method);
+          console.log('query', queryStringObject);
+          console.log('payload', buffer);
+          console.log('statusCode', statusCode);
+          console.log('response', response);
+        });
+    }
   });
 }
 

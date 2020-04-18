@@ -45,7 +45,7 @@ export function post(data: DataType<UserType>, cb: CallbackType<TokenType>): voi
       }
 
       const tokenId = helpers.createRandomString(20);
-      if (typeof tokenId === 'boolean' && !tokenId) {
+      if (typeof tokenId === 'boolean') {
         cb(500, { error: 'There was an error generating the token' });
         return;
       }
@@ -133,7 +133,7 @@ export function put<T>(data: DataType<TokenType>, cb: CallbackType<T>): void {
         cb(200);
       });
     } else {
-      cb(400, { error: 'There was an error reading a value from tokens' });
+      cb(500, { error: 'There was an error reading a value from tokens' });
     }
   });
 }
@@ -167,6 +167,7 @@ export function verifyToken(
   cb: (value: number | boolean, err?: { error: string }) => void
 ): void {
   storeData.read<TokenType>('tokens', id, (err, tokenData) => {
+    console.log(phone, id, tokenData, err);
     if (err) {
       cb(500, { error: 'There was an error reading the token data' });
       return;
