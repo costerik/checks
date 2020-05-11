@@ -1,13 +1,16 @@
 # dependencies
-/node_modules
+node_modules
+
+#
+dist
 
 # testing
-/coverage
+coverage
 
 # logs
-/logs/*
-/log-test/*
-/processed-logs/*
+logs/*
+log-test/*
+processed-logs/*
 
 # misc
 .idea
@@ -20,6 +23,7 @@ jest-test-results.json
 *.env
 .env
 response.json
+
 #lambda layers
-/nodejs
+nodejs
 nodejs.zip
