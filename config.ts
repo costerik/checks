@@ -4,6 +4,11 @@ type EnvironmentType = {
   env: 'staging' | 'production';
   hashingSecret: string;
   maxChecks: number;
+  twilio: {
+    accountSid: string;
+    authToken: string;
+    fromPhone: string;
+  };
 };
 
 type EnvironmentsType = {
@@ -16,6 +21,11 @@ const staging: EnvironmentType = {
   env: 'staging',
   hashingSecret: 'thisIsASecret',
   maxChecks: 5,
+  twilio: {
+    accountSid: 'ACb32d411ad7fe886aac54c665d25e5c5d',
+    authToken: '9455e3eb3109edc12e3d8c92768f7a67',
+    fromPhone: '+15005550006',
+  },
 };
 
 const production: EnvironmentType = {
@@ -24,6 +34,11 @@ const production: EnvironmentType = {
   env: 'production',
   hashingSecret: 'thisIsAlsoASecret',
   maxChecks: 5,
+  twilio: {
+    accountSid: '',
+    authToken: '',
+    fromPhone: '',
+  },
 };
 
 const environments: EnvironmentsType = {
