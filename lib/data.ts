@@ -84,3 +84,20 @@ export function eliminate(
     cb(false);
   });
 }
+
+export function list(
+  dir: string,
+  cb: (flag: boolean, res: Array<string> | NodeJS.ErrnoException) => void
+): void {
+  fs.readdir(`${baseDir}${dir}/`, (err, data) => {
+    if (!err && data) {
+      const trimmedFileNames: Array<string> = [];
+      data.forEach((fileName) => {
+        trimmedFileNames.push(fileName.replace('.json', ''));
+      });
+      cb(false, trimmedFileNames);
+    } else {
+      cb(true, err as NodeJS.ErrnoException);
+    }
+  });
+}

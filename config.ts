@@ -47,7 +47,4 @@ const environments: EnvironmentsType = {
   production,
 };
 
-console.log((process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase()) || 'staging');
-console.log(environments[(process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase()) || 'staging']);
-
 export default environments[(process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase()) || 'staging'];

@@ -45,4 +45,11 @@ export type CheckType = {
   method?: string;
   timeoutSeconds?: number;
   successCode?: Array<number>;
+  state?: string;
+  lastChecked?: number;
+};
+
+export type OutcomeType = {
+  error: boolean | { error: boolean; value: string };
+  responseCode: number;
 };
