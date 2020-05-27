@@ -16,11 +16,11 @@ type DecompressCallbackType = (flag: boolean, data: string | NodeJS.ErrnoExcepti
 type TruncateCallbackType = CompressCallbackType;
 
 export function append(file: string, str: string, callback: AppendCallbackType): void {
-  fs.open(baseDir + file + '.log', 'a', function (err, fileDescriptor) {
+  fs.open(baseDir + file + '.log', 'a', (err, fileDescriptor) => {
     if (!err && fileDescriptor) {
-      fs.appendFile(fileDescriptor, str + '\n', function (err) {
+      fs.appendFile(fileDescriptor, str + '\n', (err) => {
         if (!err) {
-          fs.close(fileDescriptor, function (err) {
+          fs.close(fileDescriptor, (err) => {
             if (!err) {
               callback(false);
             } else {
@@ -38,7 +38,7 @@ export function append(file: string, str: string, callback: AppendCallbackType):
 }
 
 export function list(includeCompressedLogs: boolean, callback: ListCallbacktype): void {
-  fs.readdir(baseDir, function (err, data) {
+  fs.readdir(baseDir, (err, data) => {
     if (!err && data) {
       const trimmedFileNames: Array<string> = [];
       data.forEach(function (fileName) {
@@ -61,15 +61,15 @@ export function compress(logId: string, newFileId: string, callback: CompressCal
   const sourceFile = logId + '.log';
   const destFile = newFileId + '.gz.b64';
 
-  fs.readFile(baseDir + sourceFile, 'utf8', function (err, inputString) {
+  fs.readFile(baseDir + sourceFile, 'utf8', (err, inputString) => {
     if (!err && inputString) {
-      zlib.gzip(inputString, function (err, buffer) {
+      zlib.gzip(inputString, (err, buffer) => {
         if (!err && buffer) {
-          fs.open(baseDir + destFile, 'wx', function (err, fileDescriptor) {
+          fs.open(baseDir + destFile, 'wx', (err, fileDescriptor) => {
             if (!err && fileDescriptor) {
-              fs.writeFile(fileDescriptor, buffer.toString('base64'), function (err) {
+              fs.writeFile(fileDescriptor, buffer.toString('base64'), (err) => {
                 if (!err) {
-                  fs.close(fileDescriptor, function (err) {
+                  fs.close(fileDescriptor, (err) => {
                     if (!err) {
                       callback(false);
                     } else {
@@ -96,7 +96,7 @@ export function compress(logId: string, newFileId: string, callback: CompressCal
 
 export function decompress(fileId: string, callback: DecompressCallbackType): void {
   const fileName = fileId + '.gz.b64';
-  fs.readFile(baseDir + fileName, 'utf8', function (err, str) {
+  fs.readFile(baseDir + fileName, 'utf8', (err, str) => {
     if (!err && str) {
       const inputBuffer = Buffer.from(str, 'base64');
       zlib.unzip(inputBuffer, function (err, outputBuffer) {
@@ -114,7 +114,7 @@ export function decompress(fileId: string, callback: DecompressCallbackType): vo
 }
 
 export function truncate(logId: string, callback: TruncateCallbackType): void {
-  fs.truncate(baseDir + logId + '.log', 0, function (err) {
+  fs.truncate(baseDir + logId + '.log', 0, (err) => {
     if (!err) {
       callback(false);
     } else {

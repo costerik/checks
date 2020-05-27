@@ -33,7 +33,7 @@ function internalLog(
   const logFileName = originalCheckData.id;
 
   if (logFileName) {
-    logs.append(logFileName, logString, function (err) {
+    logs.append(logFileName, logString, (err) => {
       if (!err) {
         console.log('Logging to file succeeded');
       } else {
@@ -226,14 +226,14 @@ function loop(): void {
 }
 
 function rotateLogs(): void {
-  logs.list(false, function (err, dataLogs) {
+  logs.list(false, (err, dataLogs) => {
     if (!err && dataLogs && dataLogs.length > 0) {
-      dataLogs.forEach(function (logName) {
+      dataLogs.forEach((logName) => {
         const logId = logName.replace('.log', '');
         const newFileId = logId + '-' + Date.now();
-        logs.compress(logId, newFileId, function (err) {
+        logs.compress(logId, newFileId, (err) => {
           if (!err) {
-            logs.truncate(logId, function (err) {
+            logs.truncate(logId, (err) => {
               if (!err) {
                 console.log('Success truncating logfile');
               } else {
@@ -252,7 +252,7 @@ function rotateLogs(): void {
 }
 
 function logRotationLoop(): void {
-  setInterval(function () {
+  setInterval(() => {
     rotateLogs();
   }, 1000 * 60 * 60 * 24);
 }
