@@ -258,7 +258,7 @@ function logRotationLoop(): void {
 }
 
 export default function init(): void {
-  console.log('@@INIT workers');
+  console.log('\x1b[33m%s\x1b[0m', '@@INIT workers');
   gatherAllChecks();
   loop();
   rotateLogs();
