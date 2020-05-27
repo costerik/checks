@@ -118,9 +118,15 @@ const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
 
 export default function init(): void {
   httpServer.listen(config.httpPort, () => {
-    console.log(`The server is listening on port ${config.httpPort} in ${config.env} mode`);
+    console.log(
+      '\x1b[36m%s\x1b[0m',
+      `The server is listening on port ${config.httpPort} in ${config.env} mode`
+    );
   });
   httpsServer.listen(config.httpsPort, () => {
-    console.log(`The server is listening on port ${config.httpsPort} in ${config.env} mode`);
+    console.log(
+      '\x1b[35m%s\x1b[0m',
+      `The server is listening on port ${config.httpsPort} in ${config.env} mode`
+    );
   });
 }

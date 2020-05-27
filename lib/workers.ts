@@ -9,8 +9,39 @@ import url from 'url';
 
 import * as data from './data';
 import * as helpers from './helpers';
+import * as logs from './logs';
 
 import type { CheckType, OutcomeType } from '../index.d';
+
+function internalLog(
+  originalCheckData: CheckType,
+  checkOutcome: OutcomeType,
+  state: string,
+  alertWarranted: boolean,
+  timeOfCheck: number
+): void {
+  const logData = {
+    check: originalCheckData,
+    outcome: checkOutcome,
+    state: state,
+    alert: alertWarranted,
+    time: timeOfCheck,
+  };
+
+  const logString = JSON.stringify(logData);
+
+  const logFileName = originalCheckData.id;
+
+  if (logFileName) {
+    logs.append(logFileName, logString, function (err) {
+      if (!err) {
+        console.log('Logging to file succeeded');
+      } else {
+        console.log('Logging to file failed');
+      }
+    });
+  }
+}
 
 function alertUserToStatusChange(dataArg: CheckType): void {
   const msg = `Alert: Your check for ${dataArg.method && dataArg.method.toUpperCase()} ${
@@ -38,9 +69,12 @@ function processCheckOutcome(dataArg: CheckType, checkOutcome: OutcomeType): voi
 
   const alertWarranted = dataArg.lastChecked && dataArg.state !== state ? true : false;
 
+  const timeOfCheck = Date.now();
+  internalLog(dataArg, checkOutcome, state, alertWarranted, timeOfCheck);
+
   const newCheckData = dataArg;
   newCheckData.state = state;
-  newCheckData.lastChecked = Date.now();
+  newCheckData.lastChecked = timeOfCheck;
 
   data.update('checks', newCheckData.id || '', newCheckData, (err) => {
     if (!err) {
@@ -191,8 +225,42 @@ function loop(): void {
   }, 2 * 1000);
 }
 
+function rotateLogs(): void {
+  logs.list(false, function (err, dataLogs) {
+    if (!err && dataLogs && dataLogs.length > 0) {
+      dataLogs.forEach(function (logName) {
+        const logId = logName.replace('.log', '');
+        const newFileId = logId + '-' + Date.now();
+        logs.compress(logId, newFileId, function (err) {
+          if (!err) {
+            logs.truncate(logId, function (err) {
+              if (!err) {
+                console.log('Success truncating logfile');
+              } else {
+                console.log('Error truncating logfile');
+              }
+            });
+          } else {
+            console.log('Error compressing one of the log files.', err);
+          }
+        });
+      });
+    } else {
+      console.log('Error: Could not find any logs to rotate');
+    }
+  });
+}
+
+function logRotationLoop(): void {
+  setInterval(function () {
+    rotateLogs();
+  }, 1000 * 60 * 60 * 24);
+}
+
 export default function init(): void {
-  console.log('@@INIT workers');
+  console.log('\x1b[33m%s\x1b[0m', '@@INIT workers');
   gatherAllChecks();
   loop();
+  rotateLogs();
+  logRotationLoop();
 }
